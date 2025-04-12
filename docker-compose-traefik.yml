@@ -1,0 +1,23 @@
+---
+services:
+  huver:
+    image: huver:latest
+    container_name: huver
+    restart: unless-stopped
+    volumes:
+      - "/var/log/deployer:/data"
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.huver.entrypoints=websecure"
+      - "traefik.http.routers.huver.rule=Host(`$PROJECT_HOSTNAME`)"
+      - "traefik.http.routers.huver.tls=true"
+      - "traefik.http.services.huver.loadbalancer.server.port=80"
+      - "traefik.http.routers.huver.middlewares=auth-huver"
+      - "traefik.http.middlewares.auth-huver.basicauth.users=view:$$apr1$$BnihkXb0$$KOKlJ9xa4BqIhRBANAC0y/"
+
+networks:
+  traefik:
+    external: true
