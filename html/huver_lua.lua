@@ -17,6 +17,7 @@ local function render_html(title, body)
             <title>]] .. title .. [[</title>
             <link rel="stylesheet" href="/style.css">
             <link rel="icon" href="/favicon.ico" type="image/x-icon">
+            <script src="/timestamp.js" defer></script>
         </head>
         <body>
         <h1>]] .. title .. [[</h1>
@@ -38,7 +39,6 @@ local function show_latest()
 	for file_path in result:gmatch("[^\r\n]+") do
 		local attr = io.popen("stat -c '%Y' " .. file_path):read("*a")
 		local timestamp = tonumber(attr) or 0
-		local mod_time = os.date("%Y-%m-%d %H:%M:%S", timestamp)
 
 		local file = file_path:match(".*/(.*)")
 		local id = file:match("-(%w+).html$")
@@ -48,10 +48,14 @@ local function show_latest()
 			local link = "<span style='opacity:0.6;'>(" .. id .. ")</span>"
 			local display_name = name_only:gsub("-%w+$", "") .. " " .. link
 
+			-- ВСТАВКА timestamp в span с data-ts
+			local date_html = string.format("<span class='js-timestamp' data-ts='%d'>...</span>", timestamp)
+
 			table.insert(
 				rows,
-				"<tr><td>" .. mod_time .. "</td><td><a href='/" .. id .. "'>" .. display_name .. "</a></td></tr>"
+				"<tr><td>" .. date_html .. "</td><td><a href='/" .. id .. "'>" .. display_name .. "</a></td></tr>"
 			)
+
 			count = count + 1
 			if count >= 50 then
 				break
