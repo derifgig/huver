@@ -1,6 +1,8 @@
 # Huver
 
-Deployer logs viewer
+Web service for view static html files:
+
+- logs
 
 ## Use cases
 
